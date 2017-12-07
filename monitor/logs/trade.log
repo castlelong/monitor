@@ -1,4 +1,0 @@
-INFO:root:abc
-2017/12/06 18:24:42 abc
-2017/12/06 18:25:52 SUCCESS:[39, Decimal('29'), Decimal('0.7436')]
-2017/12/06 18:27:52 SUCCESS:[40, Decimal('32'), Decimal('0.8000')]
