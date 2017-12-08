@@ -42,6 +42,7 @@ def mysql_insert_data(xf_type, xf_id):
            VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
           (data['nowTime'], xf_type['oneMinuteRate'], xf_type['fiveMinuteRate'], xf_type['fifteenMinuteRate'],\
              xf_type['meanRate'], xf_type['count'], xf_id)
+    logging.info('消费类型数据:%s', xf_type)
     conn.mysql_insert(sql)
 
 
@@ -52,6 +53,7 @@ def mysql_insert_count():
     """
     sql = "insert into tdcode.td_count (insert_date, success,  failed) \
           VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], data['failed']['value'])
+    logging.info('消费成功数据：%s，失败数据：%s', (data['success']['value'], data['failed']['value']))
     conn.mysql_insert(sql)
 
 
@@ -65,6 +67,7 @@ def mysql_insert_error_data():
         for type_name in data['errorResult']:
             sql = "insert into tdcode.td_error_type(type_name, type_count, insert_date) \
                    VALUES ('%s','%s','%s')" % (type_name, data['errorResult'][type_name], data['nowTime'])
+            logging.info('错误类型:%s',data['errorResult'][type_name])
             conn.mysql_insert(sql)
     else:
         pass
