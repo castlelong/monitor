@@ -20,12 +20,19 @@ def run():
     2分钟查询失败笔数
     :return:
     """
+    start_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+    start_time = int(time.mktime(time.strptime(start_time, '%Y-%m-%d %H:%M:%S')))
     while True:
-        sql = """select count(*) from  posp_route.t_trade_flow where t_trade_flow.TRADE_TIME>date_sub(sysdate(),interval 2 minute) 
-    and state='2'"""
+        time.sleep(120)
+        end_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
+        end_time = int(time.mktime(time.strptime(end_time, '%Y-%m-%d %H:%M:%S')))
+        sql = """select count(*) from  posp_route.t_trade_flow where unix_timestamp(t_trade_flow.TRADE_TIME)> %s \
+               and unix_timestamp(t_trade_flow.TRADE_TIME)< %s and  state='2'""" % (start_time, end_time)
+        # print(sql)
+        # exit()
         result = conn.f_trade(sql)
         falcon.df('failed', result[0])
         # print('td_df')
-        time.sleep(120)
 
+# run()
 
