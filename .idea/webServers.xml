@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="3341de25-2cc4-4b5b-b22f-15a32ca3e8ad" name="capture" url="http://10.200.201.99">
+        <fileTransfer host="10.200.201.99" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+      <webServer id="de8faa40-1586-4980-b406-6859a62a9bf4" name="monitor" url="http://10.200.201.99">
+        <fileTransfer host="10.200.201.99" port="22" accessType="SFTP">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="22" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
