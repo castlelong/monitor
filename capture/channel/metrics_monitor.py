@@ -42,9 +42,9 @@ def mysql_insert_data(xf_type, xf_id):
            VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')" % \
           (data['nowTime'], xf_type['oneMinuteRate'], xf_type['fiveMinuteRate'], xf_type['fifteenMinuteRate'],\
              xf_type['meanRate'], xf_type['count'], xf_id)
-    # logging.info('消费类型数据:%s', xf_type)
-    print('insert_data:%s', insert_data_sql)
-    # conn.mysql_insert(insert_data_sql)
+    logging.info('消费类型数据:%s', xf_type)
+    # print('insert_data:%s', insert_data_sql)
+    conn.mysql_insert(insert_data_sql)
 
 
 def mysql_insert_count():
@@ -52,11 +52,17 @@ def mysql_insert_count():
     插入每次成功失败统计数据
     :return:
     """
+    if data['errorResult']:
+        i = 0
+        for type_name in data['errorResult']:
+            if len(type_name) >= 4:
+                i += i
+        # print(i)
     insert_count_sql = "insert into tdcode.td_count (insert_date, success,  failed) \
-          VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], data['failed']['value'])
-    # logging.info('消费成功数据：%s，失败数据：%s' % (data['success']['value'], data['failed']['value']))
-    print('insert_count:%s', insert_count_sql)
-    # conn.mysql_insert(insert_count_sql)
+          VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], (data['failed']['value']-i))
+    logging.info('消费成功数据：%s，失败数据：%s' % (data['success']['value'], data['failed']['value']))
+    # print('insert_count:%s', insert_count_sql)
+    conn.mysql_insert(insert_count_sql)
 
 
 def mysql_insert_error_data():
@@ -72,9 +78,9 @@ def mysql_insert_error_data():
             else:
                 insert_error_sql = "insert into tdcode.td_error_type(type_name, type_count, insert_date) \
                        VALUES ('%s','%s','%s')" % (type_name, data['errorResult'][type_name], data['nowTime'])
-                # logging.info('错误类型:%s', type_name)
-                print('insert_error:%s', insert_error_sql)
-                # conn.mysql_insert(insert_error_sql)
+                logging.info('错误类型:%s', type_name)
+                # print('insert_error:%s', insert_error_sql)
+                conn.mysql_insert(insert_error_sql)
     else:
         pass
 
@@ -84,25 +90,28 @@ while True:
     # fp = urllib.request.urlopen("http://10.200.201.69:16901/posp-route/metricsService.do")
     fp = urllib.request.urlopen("http://172.19.24.139:16901/posp-route/metricsService.do?type=1")
     data_bytes = fp.read()
-    logging.info('数据长度：%s', len(data_bytes))
-    data_str = data_bytes.decode("utf-8")
-    data = json.loads(data_str)
-    # print(data)
-    if data['failed']['value'] == 0 and data['success']['value'] == 0:
-        pass
+    # logging.info('数据长度：%s', len(data_bytes))
+    if len(data_bytes) > 0:
+        data_str = data_bytes.decode("utf-8")
+        data = json.loads(data_str)
+        # print(data)
+        if data['failed']['value'] == 0 and data['success']['value'] == 0:
+            pass
+        else:
+            for xf_name in xf_list:
+                if xf_name in data.keys():
+                    if xf_name == 'paidTimer':
+                        df_data = data[xf_name]
+                        logging.info('代付数据为：%s', df_data)
+                    else:
+                        xf_data = data[xf_name]
+                        xf_id = xf_list[xf_name]
+                        mysql_insert_data(xf_data, xf_id)
+            mysql_insert_error_data()
+            mysql_insert_count()
+        # print(data)
+        time.sleep(10)
     else:
-        for xf_name in xf_list:
-            if xf_name in data.keys():
-                if xf_name == 'paidTimer':
-                    df_data = data[xf_name]
-                    logging.info('代付数据为：%s', df_data)
-                else:
-                    xf_data = data[xf_name]
-                    xf_id = xf_list[xf_name]
-                    mysql_insert_data(xf_data, xf_id)
-        mysql_insert_error_data()
-        mysql_insert_count()
-    # print(data)
-    time.sleep(10)
+        continue
 
 
