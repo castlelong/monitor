@@ -31,7 +31,7 @@ def success():
         re = conn.f_trade(sql_statement)
         # insert_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         # print(re)
-        logging.info('SUCCESS:%s',re)
+        logging.info('SUCCESS:%s', re)
         sql_insert = '''insert into monitor.f_succ (total_num,succ_num,succ_percent) VALUES('%s','%s','%s')'''\
                      % (re[0], re[1], re[2])
         # print(sql_insert)
