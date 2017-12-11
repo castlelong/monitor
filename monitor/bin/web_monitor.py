@@ -30,6 +30,3 @@ def run():
                 falcon.w_monitor(app, 1)
     time(600)
 
-
-run()
-

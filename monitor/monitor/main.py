@@ -13,6 +13,7 @@ from bin import td_merics
 from bin import td_df
 from bin import merchart
 from bin import h_check_gateway
+from bin import web_monitor
 
 
 threads = []
@@ -24,6 +25,8 @@ t3 = threading.Thread(target=merchart.insert_merch_all, args=())
 threads.append(t3)
 t4 = threading.Thread(target=h_check_gateway.run, args=())
 threads.append(t4)
+t5 = threading.Thread(target=web_monitor.run, args=())
+threads.append(t5)
 
 
 if __name__ == '__main__':
