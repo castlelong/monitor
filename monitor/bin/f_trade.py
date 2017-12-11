@@ -32,11 +32,14 @@ def success():
         # insert_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         # print(re)
         logging.info('SUCCESS:%s', re)
-        sql_insert = '''insert into monitor.f_succ (total_num,succ_num,succ_percent) VALUES('%s','%s','%s')'''\
-                     % (re[0], re[1], re[2])
-        # print(sql_insert)
-        insert_conn.insert_trade(sql_insert)
-        time.sleep(120)
+        if re[1] == 'none' or re[2] == 'none':
+            continue
+        else:
+            sql_insert = '''insert into monitor.f_succ (total_num,succ_num,succ_percent) VALUES('%s','%s','%s')'''\
+                         % (re[0], re[1], re[2])
+            # print(sql_insert)
+            insert_conn.insert_trade(sql_insert)
+            time.sleep(120)
 
 
 def trade_fee():
@@ -52,12 +55,15 @@ GMT_PAY> DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND STATUS=5
 GROUP BY biz_code
 ) t'''
         re = conn.f_trade(sql_statement)
-        logging.info('trade_fee:%s', re)
-        sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
-                     % (re[0], re[1], re[2], re[3])
-        # print(sql_insert)
-        insert_conn.insert_trade(sql_insert)
-        time.sleep(900)
+        if re[1] == 'none' or re[2] == 'none':
+            continue
+        else:
+            logging.info('trade_fee:%s', re)
+            sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
+                         % (re[0], re[1], re[2], re[3])
+            # print(sql_insert)
+            insert_conn.insert_trade(sql_insert)
+            time.sleep(900)
 
 
 def trade_cash():
