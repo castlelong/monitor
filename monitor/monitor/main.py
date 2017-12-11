@@ -12,6 +12,7 @@ sys.path.append(base_dir)
 from bin import td_merics
 from bin import td_df
 from bin import merchart
+from bin import h_check_gateway
 
 
 threads = []
@@ -21,6 +22,8 @@ t2 = threading.Thread(target=td_df.run, args=())
 threads.append(t2)
 t3 = threading.Thread(target=merchart.insert_merch_all, args=())
 threads.append(t3)
+t4 = threading.Thread(target=h_check_gateway.run, args=())
+threads.append(t4)
 
 
 if __name__ == '__main__':

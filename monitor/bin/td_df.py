@@ -32,6 +32,7 @@ def run():
         # exit()
         result = conn.f_trade(sql)
         falcon.df('failed', result[0])
+        start_time = end_time
         # print('td_df')
 
 # run()
