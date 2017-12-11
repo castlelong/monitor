@@ -59,3 +59,26 @@ def df(type, metrics):
     r = requests.post("http://10.200.201.99:1988/v1/push", data=json.dumps(payload))
     # print(r.text)
 
+
+def w_monitor(name, metrics):
+    """
+    网页监控信息上传
+    :param name: app名称
+    :param metrics: 0为状态正常，1位状态异常
+    :param messages:
+    :return:
+    """
+    ts = int(time.time())
+    payload = [
+        {
+            "endpoint": "WEB_Monitor",
+            "metric": name,
+            "timestamp": ts,
+            "step": 60,
+            "value": metrics,
+            "counterType": "GAUGE",
+            "tags": "WEB_Monitor",
+        }
+    ]
+    r = requests.post("http://10.200.201.99:1988/v1/push", data=json.dumps(payload))
+    # print(r.text)

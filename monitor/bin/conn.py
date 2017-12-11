@@ -11,6 +11,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
 import falcon
 
+
 def mysql(statement):
     db = pymysql.connect(host="106.15.208.12", user="alter", password="666666", port=3306, charset='utf8')
     try:
@@ -68,4 +69,16 @@ def f_trade(statement):
         cur.close()
 
 
+def conn(statement):
+    # print(statement)
+    db = pymysql.connect(host="10.200.201.101", user="root", password="123456", port=3306, charset='utf8')
+    try:
+        with db.cursor() as cursor:
+            cur = db.cursor()
+            sql = statement
+            cur.execute(sql)
+            result = cur.fetchall()
+            return result
+    finally:
+        cur.close()
 
