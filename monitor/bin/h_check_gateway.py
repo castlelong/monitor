@@ -13,10 +13,9 @@ import os
 import sys
 import logging
 import time
-import threading
 base_dir = os.path.dirname((os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(base_dir)
-print(base_dir)
+# print(base_dir)
 from bin import conn
 from bin import insert_conn
 
@@ -45,7 +44,7 @@ def run():
         re_reg = conn.f_trade(sql_reg)
         re_login = conn.f_trade(sql_loggin)
         insert_sql = """insert into monitor.c_gateway (reg,login) VALUES ('%s','%s')""" % (re_reg[0], re_login[0])
-        print(insert_sql)
+        # print(insert_sql)
         insert_conn.insert_trade(insert_sql)
         logging.info('注册数：%s,登陆数：%s' % (re_reg, re_login))
         start_time = end_time
