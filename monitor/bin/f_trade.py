@@ -25,7 +25,7 @@ def success():
     """
     while True:
         sql_statement = '''SELECT t.total_num,t.succ_num,ROUND(t.succ_num/t.total_num,4) AS succ_percent
-        FROM (SELECT SUM(CASE WHEN STATUS='5' THEN 1 ELSE 0 END) AS succ_num,COUNT(*) AS total_num 
+        FROM (SELECT COALESCE(SUM(CASE WHEN STATUS='5' THEN 1 ELSE 0 END),0) AS succ_num,COALESCE(COUNT(*),0) AS total_num 
         FROM leatrade.trade_order  WHERE  GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
         GMT_PAY> DATE_SUB(NOW(), INTERVAL 2 MINUTE)) t;'''
         re = conn.f_trade(sql_statement)
