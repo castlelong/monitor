@@ -60,7 +60,7 @@ def mysql_insert_count():
         # print(i)
     insert_count_sql = "insert into tdcode.td_count (insert_date, success,  failed) \
           VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], (data['failed']['value']-i))
-    logging.info('消费成功数据：%s，失败数据：%s' % (data['success']['value'], data['failed']['value']))
+    logging.info('消费成功数据：%s，失败数据：%stai' % (data['success']['value'], data['failed']['value']))
     # print('insert_count:%s', insert_count_sql)
     conn.mysql_insert(insert_count_sql)
 
@@ -112,6 +112,7 @@ while True:
         # print(data)
         time.sleep(10)
     else:
+        time.sleep(10)
         continue
 
 
