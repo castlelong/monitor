@@ -9,7 +9,7 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(base_dir)
 sys.path.append(base_dir)
 
-from bin import td_merics
+from bin import td_merics_oop
 from bin import td_df
 from bin import merchart
 from bin import h_check_gateway
@@ -17,7 +17,7 @@ from bin import web_monitor
 
 
 threads = []
-t1 = threading.Thread(target=td_merics.run, args=())
+t1 = threading.Thread(target=td_merics_oop.run, args=())
 threads.append(t1)
 t2 = threading.Thread(target=td_df.run, args=())
 threads.append(t2)
