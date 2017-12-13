@@ -19,27 +19,30 @@ from bin import conn, insert_conn
 
 
 def success():
-    """
+    """monitor/bin/f_trade.py:21
     查询所有用户交易的成功笔数
     :return: 
     """
-    while True:
-        sql_statement = '''SELECT t.total_num,t.succ_num,ROUND(t.succ_num/t.total_num,4) AS succ_percent
-        FROM (SELECT COALESCE(SUM(CASE WHEN STATUS='5' THEN 1 ELSE 0 END),0) AS succ_num,COALESCE(COUNT(*),0) AS total_num 
-        FROM leatrade.trade_order  WHERE  GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
-        GMT_PAY> DATE_SUB(NOW(), INTERVAL 2 MINUTE)) t;'''
-        re = conn.f_trade(sql_statement)
-        # insert_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        # print(re)
-        logging.info('SUCCESS:%s', re)
-        if re[1] == 'none' or re[2] == 'none':
-            continue
-        else:
-            sql_insert = '''insert into monitor.f_succ (total_num,succ_num,succ_percent) VALUES('%s','%s','%s')'''\
-                         % (re[0], re[1], re[2])
-            # print(sql_insert)
-            insert_conn.insert_trade(sql_insert)
-            time.sleep(120)
+    try:
+        while True:
+            sql_statement = '''SELECT t.total_num,t.succ_num,COALESCE(ROUND(t.succ_num/t.total_num,4),0) AS succ_percent
+            FROM (SELECT COALESCE(SUM(CASE WHEN STATUS='5' THEN 1 ELSE 0 END),0) AS succ_num,COALESCE(COUNT(*),0) AS total_num 
+            FROM leatrade.trade_order  WHERE  GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
+            GMT_PAY> DATE_SUB(NOW(), INTERVAL 2 MINUTE)) t;'''
+            re = conn.f_trade(sql_statement)
+            # insert_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            # print(re)
+            logging.info('SUCCESS:%s', re)
+            if re[1] == 'none' or re[2] == 'none':
+                continue
+            else:
+                sql_insert = '''insert into monitor.f_succ (total_num,succ_num,succ_percent) VALUES('%s','%s','%s')'''\
+                             % (re[0], re[1], re[2])
+                # print(sql_insert)
+                insert_conn.insert_trade(sql_insert)
+                time.sleep(120)
+    except:
+        logging.exception("Success ERROR")
 
 
 def trade_fee():
@@ -47,23 +50,26 @@ def trade_fee():
     查询用户手续费
     :return:
     """
-    while True:
-        sql_statement = '''SELECT t.biz_code,t.amt,t.fee,ROUND(t.fee/t.amt,4) FROM \
-(SELECT biz_code,COALESCE(SUM(profit),0) AS fee,COALESCE(SUM(amount),0) AS amt
-FROM leatrade.trade_order  WHERE  GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
-GMT_PAY> DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND STATUS=5
-GROUP BY biz_code
-) t'''
-        re = conn.f_trade(sql_statement)
-        if re[1] == 'none' or re[2] == 'none':
-            continue
-        else:
-            logging.info('trade_fee:%s', re)
-            sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
-                         % (re[0], re[1], re[2], re[3])
-            # print(sql_insert)
-            insert_conn.insert_trade(sql_insert)
-            time.sleep(900)
+    try:
+        while True:
+            sql_statement = '''SELECT t.biz_code,t.amt,t.fee,COALESCE(ROUND(t.fee/t.amt,4),0) FROM \
+    (SELECT biz_code,COALESCE(SUM(profit),0) AS fee,COALESCE(SUM(amount),0) AS amt
+    FROM leatrade.trade_order  WHERE  GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
+    GMT_PAY> DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND STATUS=5
+    GROUP BY biz_code
+    ) t'''
+            re = conn.f_trade(sql_statement)
+            if re[1] == 'none' or re[2] == 'none':
+                continue
+            else:
+                logging.info('trade_fee:%s', re)
+                sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
+                             % (re[0], re[1], re[2], re[3])
+                # print(sql_insert)
+                insert_conn.insert_trade(sql_insert)
+                time.sleep(900)
+    except:
+        logging.exception("trade_fee ERROR")
 
 
 def trade_cash():
@@ -71,19 +77,22 @@ def trade_cash():
     用户出款金额
     :return:
     """
-    while True:
-        sql_statement = '''SELECT t.amt,t.fee,(t.amt-t.fee) as cash FROM 
-    (SELECT  COALESCE(SUM(profit),0) AS fee,COALESCE(SUM(amount),0) AS amt FROM leatrade.trade_order  WHERE  
-    GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
-    GMT_PAY> DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND STATUS=5
-    ) t'''
-        re = conn.f_trade(sql_statement)
-        logging.info('trade_cash:%s', re)
-        sql_insert = '''insert into monitor.f_cash (amt,fee,cash) VALUES('%s','%s','%s')''' \
-                     % (re[0], re[1], re[2])
-        # print(sql_insert)
-        insert_conn.insert_trade(sql_insert)
-        time.sleep(900)
+    try:
+        while True:
+            sql_statement = '''SELECT t.amt,t.fee,(t.amt-t.fee) as cash FROM 
+        (SELECT  COALESCE(SUM(profit),0) AS fee,COALESCE(SUM(amount),0) AS amt FROM leatrade.trade_order  WHERE  
+        GMT_CREATE>DATE_SUB(NOW(), INTERVAL 60 MINUTE) AND
+        GMT_PAY> DATE_SUB(NOW(), INTERVAL 15 MINUTE) AND STATUS=5
+        ) t'''
+            re = conn.f_trade(sql_statement)
+            logging.info('trade_cash:%s', re)
+            sql_insert = '''insert into monitor.f_cash (amt,fee,cash) VALUES('%s','%s','%s')''' \
+                         % (re[0], re[1], re[2])
+            # print(sql_insert)
+            insert_conn.insert_trade(sql_insert)
+            time.sleep(900)
+    except:
+        logging.exception("trade_cash ERROR")
 
 
 threads = []

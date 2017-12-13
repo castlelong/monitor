@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/longyucen/workspace/github/monitor/bin/h_check_gateway.py", line 49, in run
+    print(insert_sql)
+NameError: name 'insert_sql' is not defined
+Traceback (most recent call last):
+  File "/Users/longyucen/workspace/github/monitor/bin/h_check_gateway.py", line 49, in run
+    print(insert_sql)
+NameError: name 'insert_sql' is not defined

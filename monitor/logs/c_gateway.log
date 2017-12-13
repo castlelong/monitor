@@ -1,0 +1,13 @@
+2017/12/12 15:14:41 None
+2017/12/12 15:26:40 None
+2017/12/12 15:35:26 None
+2017/12/12 15:41:00 Exception Logged
+Traceback (most recent call last):
+  File "/Users/longyucen/workspace/github/monitor/bin/h_check_gateway.py", line 49, in run
+    print(insert_sql)
+NameError: name 'insert_sql' is not defined
+2017/12/12 15:42:14 Exception Logged
+Traceback (most recent call last):
+  File "/Users/longyucen/workspace/github/monitor/bin/h_check_gateway.py", line 39, in run
+    time.sleep(6)
+KeyboardInterrupt

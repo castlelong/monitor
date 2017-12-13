@@ -74,7 +74,7 @@ def w_monitor(name, metrics):
             "endpoint": "WEB_Monitor",
             "metric": name,
             "timestamp": ts,
-            "step": 60,
+            "step": 600,
             "value": metrics,
             "counterType": "GAUGE",
             "tags": "WEB_Monitor",

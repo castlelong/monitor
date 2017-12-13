@@ -10,6 +10,9 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(base_dir)
 sys.path.append(base_dir)
 import falcon
+import logging
+logging.basicConfig(filename=base_dir + '/logs/mysql.log', level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
 def mysql(statement):
@@ -45,7 +48,6 @@ def td_monitor(statement):
                     v_list.append(v)
                 v_list[2] = v_list[2].strftime("%Y-%m-%d %H:%M:%S")
                 return falcon.td_falcon(v_list[0], float(v_list[1]), v_list[2])
-
     finally:
         cur.close()
 
@@ -82,3 +84,19 @@ def conn(statement):
     finally:
         cur.close()
 
+
+def w_conn(statement):
+    # print(statement)
+    db = pymysql.connect(host="10.200.201.101", user="root", password="123456", port=3306, charset='utf8')
+    try:
+        with db.cursor() as cursor:
+            cur = db.cursor()
+            sql = statement
+            cur.execute(sql)
+            result = cur.fetchall()
+            # print('result:', result)
+            return result
+    except:
+        logging.exception("ERROR W_CONN Module")
+    finally:
+        cur.close()
