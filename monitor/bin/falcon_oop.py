@@ -12,7 +12,7 @@ import logging
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
-logging.basicConfig(filename=base_dir + 'falcon_oop.logs',level=logging.INFO, \
+logging.basicConfig(filename=base_dir + '/logs/falcon_oop.logs', level=logging.INFO, \
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 

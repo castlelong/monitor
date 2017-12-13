@@ -10,10 +10,11 @@ import os
 import sys
 import conn
 import logging
-logging.basicConfig(filename='monitor.log',level=logging.INFO, \
-                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
+
 base_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(base_dir)
+logging.basicConfig(filename=base_dir + '/logs/monitor.log', level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
 def key_list():
@@ -52,12 +53,6 @@ def mysql_insert_count():
     插入每次成功失败统计数据
     :return:
     """
-    if data['errorResult']:
-        i = 0
-        for type_name in data['errorResult']:
-            if len(type_name) >= 4:
-                i += i
-        # print(i)
     insert_count_sql = "insert into tdcode.td_count (insert_date, success,  failed) \
           VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], (data['failed']['value']-i))
     logging.info('消费成功数据：%s，失败数据：%stai' % (data['success']['value'], data['failed']['value']))
