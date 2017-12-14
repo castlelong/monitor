@@ -11,7 +11,8 @@ import sys
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
-logging.basicConfig(filename=base_dir + '/logs/mysql.log', level=logging.INFO, \
+log_file = base_dir + 'mysql.log'
+logging.basicConfig(filename=log_file, level=logging.INFO, \
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
@@ -41,8 +42,9 @@ class DbConnect(object):
         try:
             with db.cursor() as insert_mysql:
                 insert_mysql.execute(self.SQL)
+                return 'success!'
         except Exception as error:
-            logging.exception('INSERT ERROR:', self.MODULE, error)
+            logging.info('INSERT ERROR:', self.MODULE, error)
         finally:
             db.commit()
             db.close()

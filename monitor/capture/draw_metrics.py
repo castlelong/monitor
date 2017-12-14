@@ -9,15 +9,15 @@ import json
 import os
 import sys
 import logging
-
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
-
+log_file = base_dir + '/logs/draw_monitor.log'
+logging.basicConfig(filename=log_file, level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 from conf import mysql_conn
 from conf import dbconfig
-logging.basicConfig(filename=base_dir + '/logs/draw_monitor.log', level=logging.INFO, \
-                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
+
 
 
 def key_list():

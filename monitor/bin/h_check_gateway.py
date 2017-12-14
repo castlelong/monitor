@@ -17,8 +17,8 @@ sys.path.append(base_dir)
 # print(base_dir)
 from conf import dbconfig
 from conf import mysql_conn
-
-logging.basicConfig(filename=base_dir + '/logs/c_gateway.log', level=logging.INFO, format='%(asctime)s %(message)s', \
+log_file = base_dir + '/logs/c_gateway.log'
+logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s %(message)s', \
                     datefmt='%Y/%m/%d %H:%M:%S')
 
 
@@ -51,19 +51,19 @@ def run():
             where unix_timestamp(a.GMT_CREATE) >'%s' and unix_timestamp(a.GMT_CREATE)< '%s'""" % (start_time, end_time)
             sql_check_succ = """SELECT count(*) from preroute.member_verify_his a
             where a.is_success=1 and unix_timestamp(a.GMT_CREATE) >'%s' and unix_timestamp(a.GMT_CREATE)< '%s'""" % (start_time, end_time)
-            sql_list = [sql_reg, sql_loggin, sql_msg_send, sql_msg_send, sql_msg_succ, sql_check_count, sql_check_succ]
+            sql_list = [sql_reg, sql_loggin, sql_msg_send, sql_msg_succ, sql_check_count, sql_check_succ]
             value_list = []
             for sql in sql_list:
                 select_conn = mysql_conn.DbConnect(pro_config, sql, 'check_gateway')
                 result = select_conn.select()
                 value_list.append(result[0][0])
-            logging.info(value_list)
+            logging.info('gateway data %s' % value_list)
             insert_sql = """insert into monitor.c_gateway (reg,login,msg_send,msg_succ,check_count,check_succ) \
             VALUES ('%s','%s','%s','%s','%s','%s')""" \
             % (value_list[0], value_list[1], value_list[2], value_list[3], value_list[4], value_list[5])
-            print(insert_sql)
             insert_conn = mysql_conn.DbConnect(monitor_config, insert_sql, 'check_gateway')
-            insert_conn.insert()
+            re = insert_conn.insert()
+            logging.info('gateway update data:%s' % re)
             start_time = end_time
     except Exception as error:
         logging.exception("Exception Logged", error)
