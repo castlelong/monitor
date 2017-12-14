@@ -35,3 +35,6 @@ def insert_merch_all():
         insert_conn.insert_trade(insert_card_sql)
         insert_conn.insert_trade(insert_zx_sql)
         time.sleep(900)
+
+
+insert_merch_all()

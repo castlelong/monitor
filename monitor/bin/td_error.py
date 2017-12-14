@@ -10,6 +10,9 @@ base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(base_dir)
 sys.path.append(base_dir)
 from bin import conn
+import logging
+logging.basicConfig(filename=base_dir + 'td_error.log', level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
 def run():
@@ -22,6 +25,7 @@ def run():
         sql = 'select type_name, type_count , insert_date from td_error_type where unix_timestamp(insert_date)> %s \
                and unix_timestamp(insert_date)< %s' % (start_time, end_time)
         result = conn.td_monitor(sql)
+        logging.info(result)
         start_time = end_time
 
 

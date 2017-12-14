@@ -35,6 +35,3 @@ def run():
             time.sleep(600)
     except:
         logging.exception('ERROR')
-
-
-# run()

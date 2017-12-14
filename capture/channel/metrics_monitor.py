@@ -13,7 +13,7 @@ import logging
 
 base_dir = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(base_dir)
-logging.basicConfig(filename=base_dir + '/logs/monitor.log', level=logging.INFO, \
+logging.basicConfig(filename='monitor.log', level=logging.INFO, \
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
@@ -54,8 +54,8 @@ def mysql_insert_count():
     :return:
     """
     insert_count_sql = "insert into tdcode.td_count (insert_date, success,  failed) \
-          VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], (data['failed']['value']-i))
-    logging.info('消费成功数据：%s，失败数据：%stai' % (data['success']['value'], data['failed']['value']))
+          VALUES('%s', '%s', '%s')" % (data['nowTime'], data['success']['value'], data['failed']['value'])
+    logging.info('消费成功数据：%s，失败数据：%s' % (data['success']['value'], data['failed']['value']))
     # print('insert_count:%s', insert_count_sql)
     conn.mysql_insert(insert_count_sql)
 
@@ -68,14 +68,11 @@ def mysql_insert_error_data():
     # 如果'errorResult'有值，则执行插入
     if data['errorResult']:
         for type_name in data['errorResult']:
-            if len(type_name) >= 4:
-                continue
-            else:
-                insert_error_sql = "insert into tdcode.td_error_type(type_name, type_count, insert_date) \
-                       VALUES ('%s','%s','%s')" % (type_name, data['errorResult'][type_name], data['nowTime'])
-                logging.info('错误类型:%s', type_name)
-                # print('insert_error:%s', insert_error_sql)
-                conn.mysql_insert(insert_error_sql)
+            insert_error_sql = "insert into tdcode.td_error_type(type_name, type_count, insert_date) \
+                   VALUES ('%s','%s','%s')" % (type_name, data['errorResult'][type_name], data['nowTime'])
+            logging.info('错误类型:%s', type_name)
+            # print('insert_error:%s', insert_error_sql)
+            conn.mysql_insert(insert_error_sql)
     else:
         pass
 
@@ -95,13 +92,10 @@ while True:
         else:
             for xf_name in xf_list:
                 if xf_name in data.keys():
-                    if xf_name == 'paidTimer':
-                        df_data = data[xf_name]
-                        logging.info('代付数据为：%s', df_data)
-                    else:
-                        xf_data = data[xf_name]
-                        xf_id = xf_list[xf_name]
-                        mysql_insert_data(xf_data, xf_id)
+                    logging.info('消费类型：', str(xf_name))
+                    xf_data = data[xf_name]
+                    xf_id = xf_list[xf_name]
+                    mysql_insert_data(xf_data, xf_id)
             mysql_insert_error_data()
             mysql_insert_count()
         # print(data)

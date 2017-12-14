@@ -8,11 +8,15 @@
 import time
 import os
 import sys
-base_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.dirname(os.path.abspath(os.path.abspath(__file__)))
 # print(base_dir)
 sys.path.append(base_dir)
 import conn_oop
 import falcon_oop
+import logging
+log_name = base_dir + '/logs/td_metrics.log'
+logging.basicConfig(filename=log_name,level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 sql = '''SELECT CASE WHEN t.`channel`='cardinfo' THEN '卡友' WHEN t.`channel`='zx-posp' THEN '众鑫' END AS chl,
 SUM(CASE WHEN t.trade_result='00' THEN t.result_num ELSE 0 END) AS success_num,
@@ -54,6 +58,7 @@ def run():
             # print(name, metric, step)
             insert = falcon_oop.FalconMain(name, metric_name, metric, step, tags)
             re = insert.td()
+            logging.info(re)
             # print(re)
             # exit()
             if last_t > curen_t > begin_t:

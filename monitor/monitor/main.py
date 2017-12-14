@@ -14,6 +14,7 @@ from bin import td_df
 from bin import merchart
 from bin import h_check_gateway
 from bin import web_monitor
+from capture import draw_metrics
 
 
 threads = []
@@ -27,12 +28,11 @@ t4 = threading.Thread(target=h_check_gateway.run, args=())
 threads.append(t4)
 t5 = threading.Thread(target=web_monitor.run, args=())
 threads.append(t5)
-
+t6 = threading.Thread(target=draw_metrics.run, args=())
+threads.append(t6)
 
 if __name__ == '__main__':
     for t in threads:
         t.setDaemon(True)
         t.start()
     t.join()
-
-
