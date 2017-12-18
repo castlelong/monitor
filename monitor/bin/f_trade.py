@@ -41,8 +41,8 @@ def success():
                 # print(sql_insert)
                 insert_conn.insert_trade(sql_insert)
                 time.sleep(120)
-    except:
-        logging.exception("Success ERROR")
+    except Exception as e:
+        logging.exception("Success ERROR:%s" % e)
 
 
 def trade_fee():
@@ -59,17 +59,14 @@ def trade_fee():
     GROUP BY biz_code
     ) t'''
             re = conn.f_trade(sql_statement)
-            if re[1] == 'none' or re[2] == 'none':
-                continue
-            else:
-                logging.info('trade_fee:%s', re)
-                sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
-                             % (re[0], re[1], re[2], re[3])
-                # print(sql_insert)
-                insert_conn.insert_trade(sql_insert)
-                time.sleep(900)
-    except:
-        logging.exception("trade_fee ERROR")
+            logging.info('trade_fee:%s', re)
+            sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
+                         % (re[0], re[1], re[2], re[3])
+            # print(sql_insert)
+            insert_conn.insert_trade(sql_insert)
+            time.sleep(900)
+    except Exception as e:
+        logging.exception("trade_fee ERROR:%s" % e)
 
 
 def trade_cash():
@@ -91,8 +88,8 @@ def trade_cash():
             # print(sql_insert)
             insert_conn.insert_trade(sql_insert)
             time.sleep(900)
-    except:
-        logging.exception("trade_cash ERROR")
+    except Exception as e:
+        logging.exception("trade_cash ERROR:%s" % e)
 
 
 threads = []
