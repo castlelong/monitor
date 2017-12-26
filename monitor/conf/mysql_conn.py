@@ -41,8 +41,8 @@ class DbConnect(object):
         db = self.db_conn
         try:
             with db.cursor() as insert_mysql:
-                insert_mysql.execute(self.SQL)
-                return 'success!'
+                insert_result = insert_mysql.execute(self.SQL)
+                return insert_result
         except Exception as error:
             logging.info('INSERT ERROR:', self.MODULE, error)
         finally:

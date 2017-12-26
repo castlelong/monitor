@@ -9,15 +9,21 @@ import os
 import sys
 import logging
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# print(base_dir)
-# exit()
 sys.path.append(base_dir)
-from bin import insert_conn
+from conf import dbconfig
+from conf import mysql_conn
+
 logging.basicConfig(filename=base_dir + 'merchant.log', level=logging.INFO, \
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
+config = dbconfig.monitor_config()
+
 
 def insert_merch_all():
+    """
+
+    :return: 返回数据操作是否成功
+    """
     while True:
         # fp = urllib.request.urlopen("http://10.200.201.69:16901/posp-route/metricsService.do")
         fp = urllib.request.urlopen("http://172.19.24.136:9095/merchantroute/metricsService/getMercStat")
@@ -35,6 +41,10 @@ def insert_merch_all():
                           VALUES ('%s','%s','%s','%s')""" \
                         % (
                             zxposp_data['disctTrdamt'], zxposp_data['totalTrdamt'], zxposp_data['rate'], 'zx-posp')
-        insert_conn.insert_trade(insert_card_sql)
-        insert_conn.insert_trade(insert_zx_sql)
+        cardinfo_conn = mysql_conn.DbConnect(config, insert_card_sql, 'cardinfo_data')
+        re_cardinfo = cardinfo_conn.insert()
+        logging.info('cardinfo update data: %s' % re_cardinfo)
+        zx_conn = mysql_conn.DbConnect(config, insert_zx_sql, 'zx')
+        re_zx = zx_conn.insert()
+        logging.info('zx update data:%s' % re_zx)
         time.sleep(900)
