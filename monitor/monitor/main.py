@@ -15,6 +15,7 @@ from bin import merchart
 from bin import h_check_gateway
 from bin import web_monitor
 from capture import draw_metrics
+from bin import auth_check
 
 
 threads = []
@@ -30,6 +31,8 @@ t5 = threading.Thread(target=web_monitor.run, args=())
 threads.append(t5)
 t6 = threading.Thread(target=draw_metrics.run, args=())
 threads.append(t6)
+t7 = threading.Thread(target=auth_check.run, args=())
+threads.append(t7)
 
 if __name__ == '__main__':
     for t in threads:

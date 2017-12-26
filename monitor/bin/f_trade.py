@@ -14,7 +14,7 @@ sys.path.append(base_dir)
 # print(base_dir)
 
 logging.basicConfig(filename=base_dir + '/logs/trade.log', level=logging.INFO, \
-                    format = '%(asctime)s %(message)s', datefmt = '%Y/%m/%d %H:%M:%S')
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 from bin import conn, insert_conn
 
 
@@ -59,11 +59,14 @@ def trade_fee():
     GROUP BY biz_code
     ) t'''
             re = conn.f_trade(sql_statement)
-            logging.info('trade_fee:%s', re)
-            sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
-                         % (re[0], re[1], re[2], re[3])
-            # print(sql_insert)
-            insert_conn.insert_trade(sql_insert)
+            if re[0].isdigit():
+                logging.info('trade_fee:%s', re)
+                sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
+                             % (re[0], re[1], re[2], re[3])
+                # print(sql_insert)
+                insert_conn.insert_trade(sql_insert)
+            else:
+                continue
             time.sleep(900)
     except Exception as e:
         logging.exception("trade_fee ERROR:%s" % e)

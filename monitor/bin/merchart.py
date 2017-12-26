@@ -7,13 +7,14 @@ import urllib.request
 import json
 import os
 import sys
-
 import logging
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # print(base_dir)
 # exit()
 sys.path.append(base_dir)
 from bin import insert_conn
+logging.basicConfig(filename=base_dir + 'merchant.log', level=logging.INFO, \
+                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 
 def insert_merch_all():
@@ -25,9 +26,11 @@ def insert_merch_all():
         data = json.loads(data_str)
         cardinfo_data = data['cardinfo']['ALL']
         zxposp_data = data['zx-posp']['ALL']
+        logging.info('cardinfo:%s' % cardinfo_data)
+        logging.info('zxposp:%s' % zxposp_data)
         insert_card_sql = """insert into mercht.mercht_all (disctTrdamt,totalTrdamt,rate,channel)\
                           VALUES ('%s','%s','%s','%s')""" \
-                          % (cardinfo_data['disctTrdamt'], cardinfo_data['totalTrdamt'],cardinfo_data['rate'], 'cardinfo')
+                          % (cardinfo_data['disctTrdamt'], cardinfo_data['totalTrdamt'], cardinfo_data['rate'], 'cardinfo')
         insert_zx_sql = """insert into mercht.mercht_all (disctTrdamt,totalTrdamt,rate,channel)\
                           VALUES ('%s','%s','%s','%s')""" \
                         % (
@@ -35,6 +38,3 @@ def insert_merch_all():
         insert_conn.insert_trade(insert_card_sql)
         insert_conn.insert_trade(insert_zx_sql)
         time.sleep(900)
-
-
-insert_merch_all()
