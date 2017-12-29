@@ -15,7 +15,7 @@ sys.path.append(base_dir)
 from bin import falcon_oop
 from conf import dbconfig
 from conf import mysql_conn
-logging.basicConfig(filename=base_dir + 'df.log', level=logging.INFO,\
+logging.basicConfig(filename=base_dir + '/logs/df.log', level=logging.INFO,\
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 
 

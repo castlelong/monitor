@@ -59,7 +59,7 @@ def trade_fee():
     GROUP BY biz_code
     ) t'''
             re = conn.f_trade(sql_statement)
-            if re[0].isdigit():
+            if not re is None:
                 logging.info('trade_fee:%s', re)
                 sql_insert = '''insert into monitor.f_fee (biz_code,amt,fee,rate) VALUES('%s','%s','%s','%s')'''\
                              % (re[0], re[1], re[2], re[3])
