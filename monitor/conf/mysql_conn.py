@@ -33,7 +33,7 @@ class DbConnect(object):
                 result = conn_mysql.fetchall()
                 return result
         except Exception as error:
-            logging.exception('CONN ERROR:', self.MODULE, error)
+            logging.exception('CONN ERROR:%s,%s' % (self.MODULE, error))
         finally:
             db.close()
 
@@ -44,7 +44,31 @@ class DbConnect(object):
                 insert_result = insert_mysql.execute(self.SQL)
                 return insert_result
         except Exception as error:
-            logging.info('INSERT ERROR:', self.MODULE, error)
+            logging.info('INSERT ERROR:%s,%s' % (self.MODULE, error))
+        finally:
+            db.commit()
+            db.close()
+
+    def update(self):
+        db = self.db_conn
+        try:
+            with db.cursor() as updata_mysql:
+                updata_result = updata_mysql.execute(self.SQL)
+                return updata_result
+        except Exception as error:
+            logging.info('UPDATA ERROR:%s,%s' % (self.MODULE, error))
+        finally:
+            db.commit()
+            db.close()
+
+    def delete(self):
+        db = self.db_conn
+        try:
+            with db.cursor() as delete_mysql:
+                delete_result = delete_mysql.execute(self.SQL)
+                return delete_result
+        except Exception as error:
+            logging.info('DELETE ERROR:%s,%s' % (self.MODULE, error))
         finally:
             db.commit()
             db.close()

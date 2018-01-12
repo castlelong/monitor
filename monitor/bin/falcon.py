@@ -81,4 +81,5 @@ def w_monitor(name, metrics):
         }
     ]
     r = requests.post("http://10.200.201.99:1988/v1/push", data=json.dumps(payload))
+    return r
     # print(r.text)

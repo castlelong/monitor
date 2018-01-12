@@ -70,7 +70,7 @@ def mysql_insert_error_data():
         for type_name in data['errorResult']:
             insert_error_sql = "insert into tdcode.td_error_type(type_name, type_count, insert_date) \
                    VALUES ('%s','%s','%s')" % (type_name, data['errorResult'][type_name], data['nowTime'])
-            logging.info('错误类型:%s', type_name)
+            logging.info('错误类型:%s' % type_name)
             # print('insert_error:%s', insert_error_sql)
             conn.mysql_insert(insert_error_sql)
     else:
@@ -83,25 +83,28 @@ while True:
     fp = urllib.request.urlopen("http://172.19.24.139:16901/posp-route/metricsService.do?type=1")
     data_bytes = fp.read()
     # logging.info('数据长度：%s', len(data_bytes))
-    if len(data_bytes) > 0:
-        data_str = data_bytes.decode("utf-8")
-        data = json.loads(data_str)
-        # print(data)
-        if data['failed']['value'] == 0 and data['success']['value'] == 0:
-            pass
+    try:
+        if len(data_bytes) > 0:
+            data_str = data_bytes.decode("utf-8")
+            data = json.loads(data_str)
+            # print(data)
+            if data['failed']['value'] == 0 and data['success']['value'] == 0:
+                pass
+            else:
+                for xf_name in xf_list:
+                    if xf_name in data.keys():
+                        logging.info('消费类型：%s' % str(xf_name))
+                        xf_data = data[xf_name]
+                        xf_id = xf_list[xf_name]
+                        mysql_insert_data(xf_data, xf_id)
+                mysql_insert_error_data()
+                mysql_insert_count()
+            # print(data)
+            time.sleep(10)
         else:
-            for xf_name in xf_list:
-                if xf_name in data.keys():
-                    logging.info('消费类型：', str(xf_name))
-                    xf_data = data[xf_name]
-                    xf_id = xf_list[xf_name]
-                    mysql_insert_data(xf_data, xf_id)
-            mysql_insert_error_data()
-            mysql_insert_count()
-        # print(data)
-        time.sleep(10)
-    else:
-        time.sleep(10)
-        continue
+            time.sleep(10)
+            continue
+    except Exception as e:
+        logging.error('metric main error: %s' % e)
 
 

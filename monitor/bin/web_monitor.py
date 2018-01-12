@@ -29,9 +29,11 @@ def run():
                 path = value[1]
                 code = requests.get(path).status_code
                 if code == 200:
-                    falcon.w_monitor(app, 0)
+                    result = falcon.w_monitor(app, 0)
+                    logging.info("web_monitor:%s %s" % (app, result))
                 else:
-                    falcon.w_monitor(app, 1)
+                    result1 = falcon.w_monitor(app, 1)
+                    logging.info("web_monitor:%s %s" % (app, result1))
             time.sleep(600)
-    except:
-        logging.exception('ERROR')
+    except Exception as e:
+        logging.exception('ERROR:', e)

@@ -16,10 +16,10 @@ logging.basicConfig(filename=log_file, level=logging.INFO, format='%(asctime)s %
 from conf import dbconfig
 from conf import mysql_conn
 
-sql = """SELECT AVG(t.bet_time) AS avg_time,#平均时间
+sql = """SELECT COALESCE(AVG(t.bet_time),0) AS avg_time,#平均时间
 COUNT(*) AS total_num,#总次数
-SUM(CASE WHEN t.`AUTHENTICATION_STATE`='4' THEN 1 ELSE 0 END) AS succ_num,#成功次数
-SUM(CASE WHEN t.`AUTHENTICATION_STATE`='4' THEN 1 ELSE 0 END)/COUNT(*) AS succ_percent #成功比例
+COALESCE(SUM(CASE WHEN t.`AUTHENTICATION_STATE`='4' THEN 1 ELSE 0 END),0) AS succ_num,#成功次数
+COALESCE(SUM(CASE WHEN t.`AUTHENTICATION_STATE`='4' THEN 1 ELSE 0 END)/COUNT(*),0) AS succ_percent #成功比例
 FROM (
 SELECT TIMESTAMPDIFF(SECOND,a.`GMT_AUTH_APPLY`,(SELECT MIN(t.`GMT_AUTH_TIME`) FROM leacrm.`t_e_auth_info_history` t
 	WHERE t.`MEMBER_NO`=a.`MEMBER_NO` AND t.`GMT_AUTH_TIME`>SYSDATE()-INTERVAL 2 DAY
