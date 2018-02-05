@@ -43,27 +43,31 @@ def run():
     begin_t = time.mktime(time.strptime(begin_t, '%H:%M:%S'))
     last_t = time.mktime(time.strptime(last_t, '%H:%M:%S'))
     while True:
-        curen_t = time.strftime('%H:%M:%S', time.localtime(time.time()))
-        curen_t = time.mktime(time.strptime(curen_t, '%H:%M:%S'))
-        # print(begin_t, last_t, curen_t)
-        connect = conn_oop.FalconRun("106.15.208.12", "alter", "666666", 3306, sql, "td_metics")
-        re = connect.conn()
-        # print(re)
-        for value in re:
-            name = 'TD' + value[0]  #通道名称
-            metric = str(value[3])  #通道出错比例
-            metric_name = name
-            step = 60  # falcon获取值时间
-            tags = "TD Monitor"
-            # print(name, metric, step)
-            insert = falcon_oop.FalconMain(name, metric_name, metric, step, tags)
-            re = insert.td()
-            logging.info(re)
+        try:
+            curen_t = time.strftime('%H:%M:%S', time.localtime(time.time()))
+            curen_t = time.mktime(time.strptime(curen_t, '%H:%M:%S'))
+            # print(begin_t, last_t, curen_t)
+            connect = conn_oop.FalconRun("106.15.208.12", "alter", "666666", 3306, sql, "td_metics")
+            re = connect.conn()
             # print(re)
-            # exit()
-            if last_t > curen_t > begin_t:
-                # print('工作时间')
-                time.sleep(60)
-            else:
-                # print('工作时间外')
-                time.sleep(900)
+            logging.info("通道出错率：%s" % re)
+            for value in re:
+                name = 'TD' + value[0]  #通道名称
+                metric = str(value[3])  #通道出错比例
+                metric_name = name
+                step = 60  # falcon获取值时间
+                tags = "TD Monitor"
+                # print(name, metric, step)
+                insert = falcon_oop.FalconMain(name, metric_name, metric, step, tags)
+                re = insert.td()
+                logging.info(re)
+                # print(re)
+                # exit()
+                if last_t > curen_t > begin_t:
+                    # print('工作时间')
+                    time.sleep(60)
+                else:
+                    # print('工作时间外')
+                    time.sleep(900)
+        except Exception as error:
+            logging.error("通道出错率程序错误", error)
