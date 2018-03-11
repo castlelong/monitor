@@ -11,7 +11,7 @@ import logging
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
 from bin import conn
-from bin import falcon
+from bin import falcon_oop
 logging.basicConfig(filename=base_dir + '/logs/w_monitor.log', level=logging.INFO, \
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 # print(base_dir + '/logs/w_monitor.log')
@@ -29,11 +29,17 @@ def run():
                 path = value[1]
                 code = requests.get(path).status_code
                 if code == 200:
-                    result = falcon.w_monitor(app, 0)
-                    logging.info("web_monitor:%s %s" % (app, result))
+                    metric_value = 0
                 else:
-                    result1 = falcon.w_monitor(app, 1)
-                    logging.info("web_monitor:%s %s" % (app, result1))
+                    metric_value = 1
+                # 调用falcon_oop,取值
+                falcon = falcon_oop.FalconMain("WEB_Monitor", app, metric_value, 600, "WEB_Monitor")
+                result = falcon.td()
+                # print(result)
+                logging.info("web_monitor:%s %s" % (app, result))
             time.sleep(600)
     except Exception as e:
         logging.exception('ERROR:', e)
+
+
+run()
