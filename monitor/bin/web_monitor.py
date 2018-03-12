@@ -8,20 +8,23 @@ import os
 import sys
 import requests
 import logging
+import falcon_oop
+from conf import dbconfig
+from conf import mysql_conn
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
-from bin import conn
-from bin import falcon_oop
-logging.basicConfig(filename=base_dir + '/logs/w_monitor.log', level=logging.INFO, \
+
+logging.basicConfig(filename=base_dir + '/logs/w_monitor.log', level=logging.INFO,\
                     format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
-# print(base_dir + '/logs/w_monitor.log')
+config = dbconfig.monitor_config()
 
 
 def run():
     try:
         while True:
             sql = """select w_name,w_path from monitor.w_monitor"""
-            re_sql = conn.w_conn(sql)
+            select_sql = mysql_conn.DbConnect(config, sql, "WEB_Monitor")
+            re_sql = select_sql.select()
             # print(re_sql)
             for value in re_sql:
                 # print(value)
@@ -37,6 +40,7 @@ def run():
                 result = falcon.td()
                 # print(result)
                 logging.info("web_monitor:%s %s" % (app, result))
+
             time.sleep(600)
     except Exception as e:
         logging.exception('ERROR:', e)
