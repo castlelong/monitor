@@ -1,8 +1,10 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
+# coding: utf-8
 # __author__ = "longyucen"
 # Date: 2017/6/19
-
+"""
+小付的metrics画图程序
+"""
 import time
 import urllib.request
 import json
@@ -11,13 +13,16 @@ import sys
 import logging
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
-log_file = base_dir + '/logs/draw_monitor.log'
-logging.basicConfig(filename=log_file, level=logging.INFO, \
-                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
-
+logger = logging.getLogger('Draw-Metrics')
+logger.setLevel(logging.INFO)
+handler = logging.FileHandler(base_dir + '/logs/d_metrics.log', encoding="utf-8")
+fh = handler
+fh.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 from conf import mysql_conn
 from conf import dbconfig
-
 
 
 def key_list():
@@ -32,7 +37,7 @@ def key_list():
         conn = mysql_conn.DbConnect(config, sql, '清单查询')
         result = conn.select()
         name_list = []
-        name_id =[]
+        name_id = []
         for k in result:
             name_list.append(k[0])
             name_id.append(k[1])
@@ -40,7 +45,7 @@ def key_list():
         # print(name_result)
         return name_result
     except Exception as error:
-        logging.exception('draw_metrics select key_list:', error)
+        logger.exception('draw_metrics select key_list:', error)
 
 
 def mysql_insert_data(xf_type, key_id, insert_time):
@@ -55,13 +60,13 @@ def mysql_insert_data(xf_type, key_id, insert_time):
               (insert_time, xf_type['oneMinuteRate'], xf_type['fiveMinuteRate'], xf_type['fifteenMinuteRate'],\
                  xf_type['meanRate'], xf_type['count'], key_id)
         # print(insert_data_sql)
-        # logging.info('消费类型数据:%s,消费类型ID：%s' % (xf_type, key_id))
+        # logger.info('消费类型数据:%s,消费类型ID：%s' % (xf_type, key_id))
         # print('insert_data:%s', insert_data_sql)
         config = dbconfig.monitor_config()
         conn = mysql_conn.DbConnect(config, insert_data_sql, 'draw_metrics_data')
         conn.insert()
     except Exception as error:
-        logging.exception('insert draw_metrics data:', error)
+        logger.exception('insert draw_metrics data:%s' % error)
 
 
 def run():
@@ -70,19 +75,23 @@ def run():
         try:
             fp = urllib.request.urlopen("http://172.19.24.139:16901/posp-route/metricsService.do?type=2")
             data_bytes = fp.read()
-            # logging.info('数据长度：%s', len(data_bytes))
+            # logger.info('数据长度：', len(data_bytes))
             if len(data_bytes) > 0:
                 data_str = data_bytes.decode("utf-8")
                 data = json.loads(data_str)
                 for xf_name in xf_list:
                     if xf_name in data.keys():
-                        logging.info('消费类型：%s' % xf_name)
                         xf_data = data[xf_name]
                         xf_id = xf_list[xf_name]
                         mysql_insert_data(xf_data, xf_id, data['nowTime'])
+                        # logger.info("Consumption Type:%s" % xf_name)
+                        logger.info("消费类型：%s" % xf_name)
                 time.sleep(600)
             else:
                 time.sleep(600)
                 continue
         except Exception as error:
-            logging.exception("draw_metrics error:", error)
+            logger.exception("draw_metrics error:%s" % error)
+
+
+run()
