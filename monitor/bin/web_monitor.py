@@ -13,9 +13,14 @@ from conf import dbconfig
 from conf import mysql_conn
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(base_dir)
+logger = logging.getLogger('WEB-Monitor')
+logger.setLevel(logging.INFO)
+fh = logging.FileHandler(base_dir + '/logs/w_monitor.log', encoding="utf-8")
+fh.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
-logging.basicConfig(filename=base_dir + '/logs/w_monitor.log', level=logging.INFO,\
-                    format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %H:%M:%S')
 config = dbconfig.monitor_config()
 
 
@@ -33,17 +38,19 @@ def run():
                 code = requests.get(path).status_code
                 if code == 200:
                     metric_value = 0
+                    # print(logger.info("web_monitor:%s" % app))
+                    # exit()
                 else:
                     metric_value = 1
                 # 调用falcon_oop,取值
                 falcon = falcon_oop.FalconMain("WEB_Monitor", app, metric_value, 600, "WEB_Monitor")
                 result = falcon.td()
                 # print(result)
-                logging.info("web_monitor:%s %s" % (app, result))
+                logger.info("web_monitor:%s %s" % (app, result))
 
             time.sleep(600)
     except Exception as e:
-        logging.exception('ERROR:', e)
+        logger.exception('ERROR:', e)
 
 
 run()
