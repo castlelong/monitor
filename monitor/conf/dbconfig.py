@@ -19,7 +19,7 @@ def monitor_config():
 
 def al_pro_config():
     config_file = {
-        'host': '106.15.208.12',
+        'host': '172.19.24.145',
         'user': 'alter',
         'passwd': '666666',
         'port': 3306
